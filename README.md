@@ -1,6 +1,6 @@
-# 3900 - H18A - DreamTeam
+# DreamTeam
 
-## P6: Eatery Management System
+## Eatery Management System
 
 ## Docker Setup
 
