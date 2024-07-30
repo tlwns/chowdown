@@ -1,0 +1,17 @@
+{
+    "[typescript][typescriptreact]": {
+        "editor.detectIndentation": false,
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true,
+    },
+    "python.analysis.typeCheckingMode": "basic",
+    "python.languageServer": "Pylance",
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/.mypy_cache": true,
+        "**/.pytest_cache": true,
+        "env": true
+    },
+    "pylint.cwd": "${workspaceFolder}/backend"
+}
+  

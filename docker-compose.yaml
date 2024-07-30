@@ -1,0 +1,59 @@
+version: '3.9'
+
+services:
+  database:
+    image: "dreamteam-prod-database:0.0.1"
+    container_name: dreamteam-db
+    build: 
+      context: ./backend/db
+      dockerfile: prod.dockerfile
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_PORT
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    env_file: .env
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "${POSTGRES_DB}", "-U", "${POSTGRES_USER}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  
+  backend:
+    image: "dreamteam-prod-backend:0.0.1"
+    container_name: dreamteam-be
+    build:
+      context: ./backend
+      dockerfile: prod.dockerfile
+    ports:
+      - "8080:8080"
+    env_file: .env
+    # dont start unless the database is completely ready
+    depends_on:
+      database:
+        condition: service_healthy
+
+  frontend:
+    image: "dreamteam-prod-frontend:0.0.1"
+    container_name: dreamteam-fe
+    build:
+      context: ./frontend
+      dockerfile: prod.dockerfile
+    ports:
+      - '3000:3000'
+    stdin_open: true
+    tty: true
+    # dont start unless both backend has started and database is completely ready
+    depends_on:
+      database:
+        condition: service_healthy
+      backend:
+        condition: service_started
+
+volumes:
+  db-data:

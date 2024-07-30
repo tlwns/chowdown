@@ -1,0 +1,125 @@
+version: '3.9'
+
+services:
+  database:
+    image: "dreamteam-database:0.0.1"
+    container_name: dreamteam-db
+    build: ./backend/db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_PORT
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    env_file: .env
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "${POSTGRES_DB}", "-U", "${POSTGRES_USER}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: dreamteam-db-debug
+    profiles:
+      - debug
+    restart: always
+    ports:
+      - "2345:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@domain.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      - database
+  
+  backend:
+    image: "dreamteam-backend:0.0.1"
+    container_name: dreamteam-be
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    env_file: .env
+    # environment:  # comment out when normal development, to avoid rate limits
+    #   USE_API_FOR_ADDRESS_AUTOCOMPLETE: y
+    volumes:
+      - ./backend:/app
+    command: uvicorn main:app --host 0.0.0.0 --port 8080 --reload
+    # dont start unless the database is completely ready
+    depends_on:
+      database:
+        condition: service_healthy
+
+  frontend:
+    image: "dreamteam-frontend:0.0.1"
+    container_name: dreamteam-fe
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./frontend/src:/client/src
+    stdin_open: true
+    tty: true
+    # dont start unless both backend has started and database is completely ready
+    depends_on:
+      database:
+        condition: service_healthy
+      backend:
+        condition: service_started
+
+  # testing containers
+  test-backend:
+    image: "dreamteam-test-backend:0.0.1"
+    container_name: test-backend
+    build:
+      context: ./backend
+      dockerfile: test.dockerfile
+    env_file: .env
+    # environment:
+    #   TYPECHECK: y
+    volumes:
+      - ./backend:/app
+    depends_on:
+      test-database:
+        condition: service_healthy
+
+  test-frontend:
+    image: "dreamteam-test-frontend:0.0.1"
+    container_name: test-frontend
+    build:
+      context: ./frontend
+      dockerfile: test.dockerfile
+    volumes:
+      - ./frontend/src:/client/src
+
+  test-database:
+    image: "dreamteam-test-database:0.0.1"
+    container_name: test-database
+    build: ./backend/db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_PORT
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    env_file: .env
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "${POSTGRES_DB}", "-U", "${POSTGRES_USER}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db-data:
+  pgadmin-data:
