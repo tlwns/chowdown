@@ -1,26 +1,26 @@
-name: Main  Automated Integration
+# name: Main  Automated Integration
 
-on:
-  schedule:
-  # cron  is in  UTC time
-  # 5am Sydney time = 6pm UTC  time
-  - cron: "0 18 * * *"
-  # This allows manual running
-  workflow_dispatch:
+# on:
+#   schedule:
+#   # cron  is in  UTC time
+#   # 5am Sydney time = 6pm UTC  time
+#   - cron: "0 18 * * *"
+#   # This allows manual running
+#   workflow_dispatch:
   
-jobs:
-  build:
-    permissions:  write-all
-    runs-on: ubuntu-latest
+# jobs:
+#   build:
+#     permissions:  write-all
+#     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      - uses: actions/checkout@v4
+#     # Steps represent a sequence of tasks that will be executed as part of the job
+#     steps:
+#       - uses: actions/checkout@v4
 
-      - name:  Merge dev -> main
-        uses: devmasx/merge-branch@master
-        with:
-          type: now
-          from_branch: dev
-          target_branch: main
-          github_token:  ${{ secrets.GITHUB_TOKEN }}
+#       - name:  Merge dev -> main
+#         uses: devmasx/merge-branch@master
+#         with:
+#           type: now
+#           from_branch: dev
+#           target_branch: main
+#           github_token:  ${{ secrets.GITHUB_TOKEN }}
