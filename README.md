@@ -2,6 +2,11 @@
 
 ## Eatery Management System
 
+## APP Demo
+
+[App demo presentation](https://www.canva.com/design/DAGCk9vquVQ/ep1QHWHzNvpwIw42GK5Yyw/view?utm_content=DAGCk9vquVQ&utm_campaign=share_your_design&utm_medium=link2&utm_source=shareyourdesignpanel)
+
+
 ## Docker Setup
 
 If you would like to run the entire app in a docker container (recommended), simply run the commands:
