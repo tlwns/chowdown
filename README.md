@@ -4,7 +4,7 @@
 
 ## APP Demo
 
-[App demo presentation](https://www.canva.com/design/DAGCk9vquVQ/ep1QHWHzNvpwIw42GK5Yyw/view?utm_content=DAGCk9vquVQ&utm_campaign=share_your_design&utm_medium=link2&utm_source=shareyourdesignpanel)
+[App demo presentation](https://www.canva.com/design/DAGtzYHedmI/Op7Hi4dldDI65LcsnZo4qA/view?utm_content=DAGtzYHedmI&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h8d91e736d2)
 
 
 ## Docker Setup
